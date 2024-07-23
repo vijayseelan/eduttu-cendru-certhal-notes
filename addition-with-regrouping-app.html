@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>எடுத்துச் சென்று சேர்த்தல்</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+        .flex { display: flex; justify-content: space-between; }
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 10px; }
+        .text-4xl { font-size: 2.25rem; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .text-red-500 { color: red; }
+        .text-lg { font-size: 1.125rem; }
+        .border-t-2 { border-top: 2px solid black; }
+        .h-16 { height: 4rem; }
+        .mt-4 { margin-top: 1rem; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .bg-blue-500 { background-color: #3b82f6; color: white; }
+        .bg-green-500 { background-color: #22c55e; color: white; }
+        .w-full { width: 100%; }
+        .current-problem {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 10px;
+            border: 2px solid #3b82f6;
+            border-radius: 10px;
+            background-color: #f0f9ff;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const AdditionWithRegrouping = () => {
+            const [step, setStep] = React.useState(0);
+            const [exampleIndex, setExampleIndex] = React.useState(0);
+            
+            const examples = [
+                { addend1: 28, addend2: 45 },
+                { addend1: 37, addend2: 56 },
+                { addend1: 69, addend2: 53 },
+                { addend1: 84, addend2: 47 },
+                { addend1: 58, addend2: 63 },
+                { addend1: 79, addend2: 42 },
+                { addend1: 86, addend2: 35 },
+                { addend1: 94, addend2: 67 },
+                { addend1: 52, addend2: 89 },
+                { addend1: 73, addend2: 68 },
+                { addend1: 95, addend2: 76 }
+            ];
+
+            const currentExample = examples[exampleIndex];
+
+            const getSteps = (addend1, addend2) => [
+                `${addend1} மற்றும் ${addend2}-ஐச் சேர்ப்போம்.`,
+                "முதலில் ஒன்றுகள் இடமதிப்பில் உள்ள எண்களைப் பார்ப்போம்.",
+                `${addend1 % 10} மற்றும் ${addend2 % 10}-ஐச் சேர்க்க வேண்டும்.`,
+                `${addend1 % 10} சேர்த்தல் ${addend2 % 10} சமம் ${(addend1 + addend2) % 10 + 10} ஆகும்.`,
+                `இந்தக் கூட்டுத்தொகை 10-ஐ விட அதிகமாக உள்ளது. எனவே, நாம் ஒரு பத்தைப் பத்து இடமதிப்பில் எடுத்துச் சென்று சேர்க்க வேண்டும்.`,
+                `10-ஐப் பத்துகள் இடமதிப்பிற்கு எடுத்துச் சென்று, ஒன்றுகள் இடத்தில் ${(addend1 + addend2) % 10} என்ற எண்ணை எழுதுவோம்.`,
+                "இப்போது பத்து இடமதிப்பைப் பார்ப்போம்.",
+                `${Math.floor(addend1 / 10)} பத்து, ${Math.floor(addend2 / 10)} பத்து மற்றும் எடுத்துச் சென்ற 1 பத்தைச் சேர்க்க வேண்டும்.`,
+                `${Math.floor(addend1 / 10)}, ${Math.floor(addend2 / 10)} மற்றும் 1 சேர்த்தல் சமம் ${Math.floor((addend1 + addend2) / 10)} ஆகும்.`,
+                `எனவே, ${addend1} சேர்த்தல் ${addend2} சமம் ${addend1 + addend2} ஆகும்.`
+            ];
+
+            const steps = getSteps(currentExample.addend1, currentExample.addend2);
+
+            const nextStep = () => setStep(prev => Math.min(prev + 1, steps.length - 1));
+            const prevStep = () => setStep(prev => Math.max(prev - 1, 0));
+            const nextExample = () => {
+                setExampleIndex((prevIndex) => (prevIndex + 1) % examples.length);
+                setStep(0);
+            };
+
+            return (
+                <div className="container">
+                    <h2 className="text-center">எடுத்துச் சென்று சேர்த்தல்</h2>
+                    <div className="text-center">
+                        <div className="current-problem">
+                            {currentExample.addend1} + {currentExample.addend2} = {step === steps.length - 1 ? currentExample.addend1 + currentExample.addend2 : '?'}
+                        </div>
+                    </div>
+                    <div className="mb-2">
+                        <div className="flex mb-2">
+                            <div className="text-center" style={{width: '50%'}}>பத்துகள்</div>
+                            <div className="text-center" style={{width: '50%'}}>ஒன்றுகள்</div>
+                        </div>
+                        <div className="flex mb-2">
+                            <div className="text-center text-4xl relative" style={{width: '50%'}}>
+                                <span style={{position: 'relative', display: 'inline-block'}}>
+                                    {step >= 5 && <span style={{position: 'absolute', color: 'red', fontSize: '1.125rem', left: '-12px', top: '2px'}}>1</span>}
+                                    {Math.floor(currentExample.addend1 / 10)}
+                                </span>
+                            </div>
+                            <div className="text-center text-4xl" style={{width: '50%'}}>
+                                {currentExample.addend1 % 10}
+                            </div>
+                        </div>
+                        <div className="flex mb-2">
+                            <div className="text-center text-4xl" style={{width: '50%'}}>{Math.floor(currentExample.addend2 / 10)}</div>
+                            <div className="text-center text-4xl" style={{width: '50%'}}>{currentExample.addend2 % 10}</div>
+                        </div>
+                        <div className="border-t-2 mb-2"></div>
+                        <div className="flex">
+                            <div className="text-center text-4xl" style={{width: '50%'}}>
+                                {step >= 8 ? Math.floor((currentExample.addend1 + currentExample.addend2) / 10) : '_'}
+                            </div>
+                            <div className="text-center text-4xl" style={{width: '50%'}}>
+                                {step >= 5 ? (currentExample.addend1 + currentExample.addend2) % 10 : '_'}
+                            </div>
+                        </div>
+                    </div>
+                    <p className="mb-2 h-16">{steps[step]}</p>
+                    <div className="flex mb-2">
+                        <button 
+                            onClick={prevStep} 
+                            className="bg-blue-500"
+                            disabled={step === 0}
+                        >
+                            முந்தைய
+                        </button>
+                        <button 
+                            onClick={nextStep} 
+                            className="bg-blue-500"
+                            disabled={step === steps.length - 1}
+                        >
+                            அடுத்து
+                        </button>
+                    </div>
+                    <div className="mt-4">
+                        <button 
+                            onClick={nextExample} 
+                            className="bg-green-500 w-full"
+                        >
+                            அடுத்த உதாரணம்
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<AdditionWithRegrouping />, document.getElementById('root'));
+    </script>
+</body>
+</html>
